@@ -1,5 +1,5 @@
 import "dotenv/config";
-import express, { Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
@@ -34,10 +34,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.get("/", (req: Request, res: Response) => {
-  res.send("Oauth2.0 Server");
-});
 
 app.use("/auth", authRouter);
 

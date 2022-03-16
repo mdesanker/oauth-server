@@ -10,8 +10,6 @@ passport.use(
       callbackURL: process.env.GOOGLE_CALLBACK,
     },
     async (accessToken, refreshToken, profile, cb) => {
-      console.log(profile);
-
       try {
         const existingUser = await User.findOne({ googleId: profile.id });
 
@@ -41,13 +39,8 @@ passport.serializeUser((user: any, done) => {
   done(null, user._id);
 });
 
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = User.findById(id);
+passport.deserializeUser((id, done) => {
+  User.findById(id).then((user) => {
     done(null, user);
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.error(err.message);
-    }
-  }
+  });
 });
