@@ -6,7 +6,8 @@ export interface IUser {
   googleId?: string;
   username: string;
   email: string;
-  date: DateTime;
+  avatar: string;
+  date?: DateTime;
 }
 
 const UserSchema = new Schema<IUser>({
