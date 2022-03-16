@@ -1,0 +1,19 @@
+{
+  "name": "oauth-server",
+  "version": "1.0.0",
+  "description": "Server for Oauth2 authentication frontend",
+  "main": "app.ts",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mdesanker/oauth-server.git"
+  },
+  "author": "Michael Desanker",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mdesanker/oauth-server/issues"
+  },
+  "homepage": "https://github.com/mdesanker/oauth-server#readme"
+}
