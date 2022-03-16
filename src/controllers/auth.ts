@@ -30,7 +30,7 @@ const loginFailed = (req: Request, res: Response) => {
 };
 
 const logout = (req: Request, res: Response) => {
-  req.logout();
+  req.logOut();
   res.redirect(CLIENT_URL);
 };
 

@@ -7,6 +7,6 @@ auth.get("/google", authController.google);
 auth.get("/google/callback", authController.googleCallback);
 auth.get("/login/success", authController.loginSuccess);
 auth.get("/login/failed", authController.loginFailed);
-auth.get("/logout", authController.logout);
+auth.delete("/logout", authController.logout);
 
 export = auth;
