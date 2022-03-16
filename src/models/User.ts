@@ -14,6 +14,7 @@ const UserSchema = new Schema<IUser>({
   googleId: { type: String },
   username: { type: String, required: true },
   email: { type: String, required: true },
+  avatar: { type: String, required: true },
   date: { type: Date, default: DateTime.now },
 });
 
