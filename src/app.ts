@@ -5,6 +5,8 @@ import helmet from "helmet";
 import compression from "compression";
 import connectDB from "./config.ts/mongoConfig";
 
+import authRouter from "./routes/api/auth";
+
 const app = express();
 
 connectDB();
@@ -23,6 +25,8 @@ app.use(express.urlencoded({ extended: false }));
 app.get("/", (req: Request, res: Response) => {
   res.send("Oauth2.0 Server");
 });
+
+app.use("/auth", authRouter);
 
 const PORT = (process.env.PORT as string) || (process.env.DEV_PORT as string);
 
