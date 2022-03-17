@@ -43,6 +43,18 @@ const githubCallback = [
   },
 ];
 
+// FACEBOOK
+const facebook = passport.authenticate("facebook", { scope: ["email"] });
+
+const facebookCallback = [
+  passport.authenticate("facebook", {
+    failureRedirect: "/login/failed",
+  }),
+  (req: Request, res: Response, next: NextFunction) => {
+    res.redirect(CLIENT_URL);
+  },
+];
+
 // LOGOUT
 const logout = (req: Request, res: Response) => {
   req.logOut();
@@ -56,5 +68,7 @@ export default {
   googleCallback,
   github,
   githubCallback,
+  facebook,
+  facebookCallback,
   logout,
 };

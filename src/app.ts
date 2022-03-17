@@ -10,6 +10,7 @@ import connectDB from "./config.ts/mongoConfig";
 import authRouter from "./routes/api/auth";
 import "./strategies/googleStrategy";
 import "./strategies/githubStrategy";
+import "./strategies/facebookStrategy";
 
 const app = express();
 
