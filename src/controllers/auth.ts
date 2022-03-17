@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import passport from "passport";
 import { check, validationResult } from "express-validator";
+import faker from "@faker-js/faker";
+import bcrypt from "bcryptjs";
+import User, { IUser } from "../models/User";
 
 const CLIENT_URL =
   (process.env.CLIENT_URL as string) || (process.env.DEV_CLIENT_URL as string);
@@ -78,11 +81,41 @@ const register = [
   },
 
   // Process input
-  (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const { username, email, password } = req.body;
 
-    console.log(req.body);
-    next();
+    try {
+      // Check email available
+      const existingUser = await User.findOne({ provider: "local", email });
+
+      if (existingUser) {
+        return res
+          .status(409)
+          .json({ errors: [{ msg: "Email already in use" }] });
+      }
+
+      // Create new user
+      const user = new User<IUser>({
+        provider: "local",
+        username,
+        email,
+        password,
+        avatar: faker.image.animals(),
+      });
+
+      // Hash password
+      user.password = await bcrypt.hash(password, 10);
+
+      await user.save();
+
+      const document = user.toObject();
+      delete document.password;
+      res.status(201).json(document);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        res.status(500).send("Server error");
+      }
+    }
   },
 ];
 
