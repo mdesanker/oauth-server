@@ -119,6 +119,61 @@ const register = [
   },
 ];
 
+const login = [
+  // Validate and sanitize input
+  check("email", "Email is required").trim().notEmpty().escape().isEmail(),
+  check("password", "Password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long")
+    .escape(),
+
+  // Error handling
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    next();
+  },
+
+  // Process input
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+
+    try {
+      // Check email exists
+      const user = await User.findOne({ provider: "local", email }).select(
+        "password"
+      );
+
+      if (!user) {
+        return res
+          .status(401)
+          .json({ errors: [{ msg: "Invalid credentials" }] });
+      }
+
+      // Check password
+      const isMatch = bcrypt.compare(password, user.password!);
+
+      if (!isMatch) {
+        return res
+          .status(401)
+          .json({ errors: [{ msg: "Invalid credentials" }] });
+      }
+
+      const document = user.toObject();
+      delete document.password;
+      res.status(200).json(document);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return res.status(500).send("Server error");
+      }
+    }
+  },
+];
+
 const local = passport.authenticate("local", { scope: ["email"] });
 
 const localCallback = [
@@ -146,6 +201,7 @@ export default {
   facebook,
   facebookCallback,
   register,
+  login,
   localCallback,
   logout,
 };
