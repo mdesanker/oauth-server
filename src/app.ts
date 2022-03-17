@@ -11,6 +11,7 @@ import authRouter from "./routes/api/auth";
 import "./strategies/googleStrategy";
 import "./strategies/githubStrategy";
 import "./strategies/facebookStrategy";
+import "./strategies/localStrategy";
 
 const app = express();
 

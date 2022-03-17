@@ -18,6 +18,10 @@ auth.get("/github/callback", authController.githubCallback);
 auth.get("/facebook", authController.facebook);
 auth.get("/facebook/callback", authController.facebookCallback);
 
+// FACEBOOK AUTH
+auth.post("/register", authController.register);
+auth.get("/local/callback", authController.localCallback);
+
 auth.post("/logout", authController.logout);
 
 export = auth;

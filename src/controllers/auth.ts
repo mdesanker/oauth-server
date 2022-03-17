@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import passport from "passport";
+import { check, validationResult } from "express-validator";
 
 const CLIENT_URL =
   (process.env.CLIENT_URL as string) || (process.env.DEV_CLIENT_URL as string);
@@ -55,6 +56,47 @@ const facebookCallback = [
   },
 ];
 
+// LOCAL
+const register = [
+  // Validate and sanitize input
+  check("username", "Username is required").trim().notEmpty().escape(),
+  check("email", "Email is required").trim().notEmpty().escape().isEmail(),
+  check("password", "Password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long")
+    .escape(),
+
+  // Error handling
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    next();
+  },
+
+  // Process input
+  (req: Request, res: Response, next: NextFunction) => {
+    const { username, email, password } = req.body;
+
+    console.log(req.body);
+    next();
+  },
+];
+
+const local = passport.authenticate("local", { scope: ["email"] });
+
+const localCallback = [
+  passport.authenticate("local", {
+    failureRedirect: "/login/failed",
+  }),
+  (req: Request, res: Response, next: NextFunction) => {
+    res.redirect(CLIENT_URL);
+  },
+];
+
 // LOGOUT
 const logout = (req: Request, res: Response) => {
   req.logOut();
@@ -70,5 +112,7 @@ export default {
   githubCallback,
   facebook,
   facebookCallback,
+  register,
+  localCallback,
   logout,
 };
