@@ -18,9 +18,9 @@ auth.get("/github/callback", authController.githubCallback);
 auth.get("/facebook", authController.facebook);
 auth.get("/facebook/callback", authController.facebookCallback);
 
-// FACEBOOK AUTH
+// LOCAL AUTH
 auth.post("/register", authController.register);
-auth.get("/local/callback", authController.localCallback);
+auth.post("/login", authController.login);
 
 auth.post("/logout", authController.logout);
 
