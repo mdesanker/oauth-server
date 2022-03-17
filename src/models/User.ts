@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 export interface IUser {
   _id?: string;
   googleId?: string;
+  githubId?: string;
   username: string;
   email: string;
   avatar: string;
@@ -12,6 +13,7 @@ export interface IUser {
 
 const UserSchema = new Schema<IUser>({
   googleId: { type: String },
+  githubId: { type: String },
   username: { type: String, required: true },
   email: { type: String, required: true },
   avatar: { type: String, required: true },

@@ -1,29 +1,28 @@
 import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as GithubStrategy } from "passport-github2";
 import User, { IUser } from "../models/User";
 
 passport.use(
-  new GoogleStrategy(
+  new GithubStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      callbackURL: process.env.GOOGLE_CALLBACK as string,
+      clientID: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+      callbackURL: process.env.GITHUB_CALLBACK as string,
     },
-    async (accessToken, refreshToken, profile, cb) => {
-      try {
-        const existingUser = await User.findOne({ googleId: profile.id });
+    async (accessToken: any, refreshToken: any, profile: any, cb: any) => {
+      console.log(profile);
 
+      try {
+        const existingUser = await User.findOne({ githubId: profile.id });
         if (existingUser) {
           cb(null, existingUser);
         }
-
         const newUser = new User<IUser>({
-          googleId: profile.id,
+          githubId: profile.id,
           username: profile.displayName,
-          email: profile._json.email!,
-          avatar: profile._json.picture!,
+          email: profile.emails[0].value,
+          avatar: profile._json.avatar_url!,
         });
-
         await newUser.save();
         cb(null, newUser);
       } catch (err: unknown) {

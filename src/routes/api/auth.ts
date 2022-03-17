@@ -3,10 +3,17 @@ import authController from "../../controllers/auth";
 
 const auth = Router();
 
-auth.get("/google", authController.google);
-auth.get("/google/callback", authController.googleCallback);
 auth.get("/login/success", authController.loginSuccess);
 auth.get("/login/failed", authController.loginFailed);
+
+// GOOGLE AUTH
+auth.get("/google", authController.google);
+auth.get("/google/callback", authController.googleCallback);
+
+//GITHUB AUTH
+auth.get("/github", authController.github);
+auth.get("/github/callback", authController.githubCallback);
+
 auth.post("/logout", authController.logout);
 
 export = auth;
