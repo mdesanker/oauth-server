@@ -60,71 +60,49 @@ const facebookCallback = [
 ];
 
 // LOCAL
-const register = [
-  // Validate and sanitize input
-  check("username", "Username is required").trim().notEmpty().escape(),
-  check("email", "Email is required").trim().notEmpty().escape().isEmail(),
-  check("password", "Password is required")
-    .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters long")
-    .escape(),
+const register = async (req: Request, res: Response, next: NextFunction) => {
+  const { username, email, password } = req.body;
 
-  // Error handling
-  (req: Request, res: Response, next: NextFunction) => {
-    const errors = validationResult(req);
+  try {
+    // Check email available
+    const existingUser = await User.findOne({ provider: "local", email });
 
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+    if (existingUser) {
+      return res
+        .status(409)
+        .json({ errors: [{ msg: "Email already in use" }] });
     }
 
-    next();
-  },
+    // Create new user
+    const user = new User<IUser>({
+      provider: "local",
+      username,
+      email,
+      password,
+      avatar: faker.image.animals(),
+    });
 
-  // Process input
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { username, email, password } = req.body;
+    // Hash password
+    user.password = await bcrypt.hash(password, 10);
 
-    try {
-      // Check email available
-      const existingUser = await User.findOne({ provider: "local", email });
+    await user.save();
 
-      if (existingUser) {
-        return res
-          .status(409)
-          .json({ errors: [{ msg: "Email already in use" }] });
-      }
-
-      // Create new user
-      const user = new User<IUser>({
-        provider: "local",
-        username,
-        email,
-        password,
-        avatar: faker.image.animals(),
-      });
-
-      // Hash password
-      user.password = await bcrypt.hash(password, 10);
-
-      await user.save();
-
-      const document = user.toObject();
-      delete document.password;
-      res.status(201).json(document);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        res.status(500).send("Server error");
-      }
+    const document = user.toObject();
+    delete document.password;
+    res.status(201).json(document);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).send("Server error");
     }
-  },
-];
+  }
+};
 
 const login = [
   passport.authenticate("local", {
     failureRedirect: "/login/failed",
   }),
   (req: Request, res: Response, next: NextFunction) => {
-    res.redirect(CLIENT_URL);
+    res.status(200).json({ user: req.user });
   },
 ];
 

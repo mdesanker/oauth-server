@@ -1,5 +1,6 @@
 import { Router } from "express";
 import authController from "../../controllers/auth";
+import validator from "../../utils/validator";
 
 const auth = Router();
 
@@ -19,7 +20,7 @@ auth.get("/facebook", authController.facebook);
 auth.get("/facebook/callback", authController.facebookCallback);
 
 // LOCAL AUTH
-auth.post("/register", authController.register);
+auth.post("/register", validator.register, authController.register);
 auth.post("/login", authController.login);
 
 auth.post("/logout", authController.logout);
