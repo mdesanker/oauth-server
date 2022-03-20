@@ -21,7 +21,7 @@ auth.get("/facebook/callback", authController.facebookCallback);
 
 // LOCAL AUTH
 auth.post("/register", validator.register, authController.register);
-auth.post("/login", authController.login);
+auth.post("/login", validator.login, authController.login);
 
 auth.post("/logout", authController.logout);
 
